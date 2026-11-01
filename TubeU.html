@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101114">
+<title>TubeU — Watch what you love</title>
+<style>
+:root{color-scheme:dark;--bg:#101114;--panel:#181a20;--panel2:#20232b;--text:#f5f6fa;--muted:#a1a5b3;--line:#2b2e38;--accent:#8b7cff;--accent2:#b2a8ff;--danger:#ff737d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:20px;padding:15px clamp(16px,4vw,48px);background:rgba(16,17,20,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;font-size:23px;letter-spacing:-1px;white-space:nowrap}
+.logo{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:var(--accent);color:white;font-size:18px;box-shadow:0 5px 24px #8b7cff40}
+.brand span:last-child{color:var(--accent2)}
+.search{display:flex;gap:8px;max-width:720px;flex:1;margin:auto}
+.search input{min-width:0;flex:1;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px 15px;color:var(--text);outline:none}
+.search input:focus{border-color:var(--accent)}
+.btn{border:0;border-radius:12px;padding:11px 16px;background:var(--accent);color:#fff;font-weight:750;transition:transform .15s,filter .15s}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text)}
+.layout{display:grid;grid-template-columns:210px minmax(0,1fr);max-width:1600px;margin:auto}
+.sidebar{padding:25px 14px;border-right:1px solid var(--line);min-height:calc(100vh - 67px)}
+.navbtn{width:100%;display:flex;gap:12px;align-items:center;text-align:left;padding:12px 14px;border:0;border-radius:12px;background:transparent;color:var(--muted);margin-bottom:5px;font-weight:650}
+.navbtn:hover,.navbtn.active{background:#8b7cff20;color:var(--text)}
+.navbtn.active{box-shadow:inset 3px 0 var(--accent)}
+.side-note{margin:26px 10px 0;color:var(--muted);font-size:12px;line-height:1.6}
+main{min-width:0;padding:clamp(18px,3vw,38px)}
+.hero{padding:clamp(22px,4vw,38px);border:1px solid #3b355f;border-radius:22px;background:radial-gradient(ellipse at 90% 0%,#8b7cff2b,transparent 45%),linear-gradient(120deg,#1c1c28,#17181e);margin-bottom:28px}
+.eyebrow{font-size:11px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase;color:var(--accent2)}
+h1{font-size:clamp(27px,4vw,42px);letter-spacing:-1.5px;line-height:1.1;margin:10px 0}
+.hero p{color:var(--muted);max-width:590px;margin:0 0 20px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:8px 13px;background:var(--panel);color:var(--muted);font-weight:650}
+.chip.active,.chip:hover{background:#8b7cff22;border-color:var(--accent);color:var(--text)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0}
+h2{font-size:20px;letter-spacing:-.5px;margin:0}
+#status{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.video-card{min-width:0;cursor:pointer}
+.thumb-wrap{position:relative;aspect-ratio:16/9;border-radius:15px;overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
+.thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.video-card:hover .thumb-wrap img{transform:scale(1.04)}
+.playmark{position:absolute;inset:0;display:grid;place-items:center;background:#0000;transition:background .2s}
+.playmark span{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:#101114d9;opacity:0;transform:scale(.9);transition:.2s}
+.video-card:hover .playmark{background:#0002}.video-card:hover .playmark span{opacity:1;transform:scale(1)}
+.video-meta{display:flex;gap:11px;padding-top:12px}
+.avatar{flex:0 0 35px;width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#8b7cff,#42c9c2);font-weight:850}
+.video-title{font-weight:750;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.channel{font-size:13px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}
+.empty{grid-column:1/-1;text-align:center;padding:55px 20px;background:var(--panel);border:1px dashed var(--line);border-radius:18px;color:var(--muted)}
+.empty strong{display:block;color:var(--text);font-size:18px;margin-bottom:6px}
+.shorts-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.short-card{cursor:pointer;min-width:0}
+.short-thumb{aspect-ratio:9/16;position:relative;overflow:hidden;border-radius:15px;background:var(--panel2);border:1px solid var(--line)}
+.short-thumb img{width:100%;height:100%;object-fit:cover}
+.short-thumb:after{content:"▶";position:absolute;bottom:12px;right:12px;background:#101114cc;padding:7px 10px;border-radius:9px}
+.short-title{font-weight:700;font-size:13px;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hidden{display:none!important}
+.modal{position:fixed;inset:0;z-index:30;background:#000b;display:grid;place-items:center;padding:18px}
+.modal-box{width:min(100%,1000px);background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 25px 100px #0009}
+.modal-top{display:flex;align-items:center;gap:15px;justify-content:space-between;padding:13px 16px}
+.modal-title{font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.close{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 12px}
+.player{aspect-ratio:16/9;background:#000}.player iframe{width:100%;height:100%;border:0;display:block}
+.player.short-player{aspect-ratio:9/16;max-height:75vh;width:min(100%,420px);margin:auto}
+.player.short-player iframe{height:100%}
+.modal-bottom{padding:13px 16px;color:var(--muted);font-size:13px}
+footer{padding:25px 0 5px;color:var(--muted);font-size:12px}
+a{color:var(--accent2)}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shorts-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.layout{grid-template-columns:170px minmax(0,1fr)}}
+@media(max-width:700px){.topbar{gap:10px;flex-wrap:wrap}.brand{font-size:20px}.search{order:2;flex-basis:100%;max-width:none}.layout{display:block}.sidebar{display:flex;gap:5px;overflow:auto;padding:10px;border-right:0;border-bottom:1px solid var(--line);min-height:0}.navbtn{width:auto;white-space:nowrap;margin:0;padding:9px 12px}.side-note{display:none}main{padding:18px 14px}.grid{gap:15px}.shorts-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.hero{border-radius:17px}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.shorts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.search .btn{padding:10px 12px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">▶</div><div>Tube<span>U</span></div></div>
+  <form class="search" id="searchForm">
+    <input id="searchInput" type="search" placeholder="Search videos, creators, topics…" aria-label="Search YouTube" required>
+    <button class="btn" type="submit">Search</button>
+  </form>
+</header>
+<div class="layout">
+  <aside class="sidebar">
+    <button class="navbtn active" data-view="home">⌂ <span>Discover</span></button>
+    <button class="navbtn" data-view="videos">▣ <span>Videos</span></button>
+    <button class="navbtn" data-view="shorts">▯ <span>Shorts</span></button>
+    <div class="side-note">Your videos, your way.<br>Search and watch without creating a TubeU account.</div>
+  </aside>
+  <main>
+    <section class="hero" id="hero">
+      <div class="eyebrow">A fresh way to watch</div>
+      <h1>Find your next favorite.</h1>
+      <p>Search across YouTube and watch videos or Shorts right here in TubeU, with a clean dark interface.</p>
+      <button class="btn" id="startSearch">Explore videos&nbsp; ↗</button>
+    </section>
+    <div class="chips" id="chips">
+      <button class="chip active" data-query="trending videos">For you</button>
+      <button class="chip" data-query="gaming highlights">Gaming</button>
+      <button class="chip" data-query="music videos">Music</button>
+      <button class="chip" data-query="science explained">Science</button>
+      <button class="chip" data-query="sports highlights">Sports</button>
+      <button class="chip" data-query="funny animals">Animals</button>
+    </div>
+    <div class="section-head"><h2 id="sectionTitle">Discover videos</h2><span id="status">Add an API key to get started</span></div>
+    <div id="videoGrid" class="grid">
+      <div class="empty"><strong>Welcome to TubeU</strong>Enter a YouTube Data API v3 key in Settings below, then search for anything you want to watch.</div>
+    </div>
+    <div class="section-head hidden" id="shortsHead"><h2>Shorts</h2><span class="channel">Vertical video results</span></div>
+    <div id="shortsGrid" class="shorts-grid hidden"></div>
+    <div class="section-head" style="margin-top:30px"><h2>Settings</h2></div>
+    <section style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px">
+      <label for="apiKey" style="display:block;font-weight:750;margin-bottom:8px">YouTube Data API v3 key</label>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <input id="apiKey" type="password" autocomplete="off" placeholder="Paste your Google API key" style="flex:1;min-width:180px;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:11px 13px;color:var(--text)">
+        <button class="btn" id="saveKey">Save key for this session</button>
+        <button class="btn secondary" id="clearKey">Clear</button>
+      </div>
+      <p style="color:var(--muted);font-size:13px;margin:12px 0 0">TubeU uses Google's public YouTube Data API for search. The key stays in this page's session memory and is not saved to local storage. For a public website, restrict your key by HTTP referrer and API. Google may enforce quota limits.</p>
+    </section>
+    <footer>TubeU is an independent interface and is not affiliated with YouTube or Google. Videos are streamed by YouTube's embedded player and remain subject to YouTube's terms and creator settings. <a href="https://developers.google.com/youtube/v3" target="_blank" rel="noopener">API documentation</a>.</footer>
+  </main>
+</div>
+<div class="modal hidden" id="playerModal" role="dialog" aria-modal="true" aria-label="Video player">
+  <div class="modal-box">
+    <div class="modal-top"><div class="modal-title" id="modalTitle">Now playing</div><button class="close" id="closeModal" aria-label="Close player">✕</button></div>
+    <div class="player" id="playerBox"><iframe id="youtubePlayer" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+    <div class="modal-bottom">Playback is provided by YouTube. If a video cannot be embedded, open it on YouTube instead.</div>
+  </div>
+</div>
+<script>
+(() => {
+  const API_BASE = 'https://www.googleapis.com/youtube/v3/search';
+  let apiKey = '';
+  let currentView = 'home';
+  let lastQuery = 'trending videos';
+  let currentItems = [];
+  const $ = id => document.getElementById(id);
+  const videoGrid = $('videoGrid');
+  const shortsGrid = $('shortsGrid');
+  const status = $('status');
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const empty = (title, text) => `<div class="empty"><strong>${esc(title)}</strong>${esc(text)}</div>`;
+
+  function showStatus(message) { status.textContent = message; }
+  function setView(view) {
+    currentView = view;
+    document.querySelectorAll('.navbtn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+    $('shortsHead').classList.toggle('hidden', view !== 'shorts');
+    shortsGrid.classList.toggle('hidden', view !== 'shorts');
+    videoGrid.classList.toggle('hidden', view === 'shorts');
+    $('hero').classList.toggle('hidden', view !== 'home');
+    $('chips').classList.toggle('hidden', view !== 'home');
+    $('sectionTitle').textContent = view === 'shorts' ? 'Shorts results' : view === 'videos' ? 'Videos' : 'Discover videos';
+    if (view === 'shorts') $('searchInput').placeholder = 'Search YouTube Shorts…';
+    else $('searchInput').placeholder = 'Search videos, creators, topics…';
+  }
+
+  async function searchYouTube(query, view = currentView) {
+    query = query.trim();
+    if (!query) return;
+    if (!apiKey) {
+      videoGrid.innerHTML = empty('API key needed', 'Create a Google Cloud project, enable YouTube Data API v3, then paste your API key in Settings.');
+      shortsGrid.innerHTML = empty('API key needed', 'Add your API key in Settings to search Shorts.');
+      showStatus('Add an API key in Settings');
+      $('apiKey').focus();
+      return;
+    }
+    lastQuery = query;
+    setView(view);
+    videoGrid.innerHTML = empty('Searching…', 'Looking for videos on YouTube.');
+    shortsGrid.innerHTML = empty('Searching…', 'Looking for Shorts on YouTube.');
+    showStatus('Searching…');
+    try {
+      const params = new URLSearchParams({
+        part:'snippet', type:'video', q: query, maxResults:'24',
+        videoEmbeddable:'true', safeSearch:'moderate', key:apiKey,
+        order:'relevance'
+      });
+      const response = await fetch(`${API_BASE}?${params}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error?.message || `YouTube API returned ${response.status}`);
+      currentItems = (data.items || []).filter(item => item.id?.videoId);
+      renderVideos(currentItems);
+      renderShorts(currentItems);
+      showStatus(`${currentItems.length} results`);
+      if (!currentItems.length) {
+        videoGrid.innerHTML = empty('No videos found', 'Try a different search phrase.');
+        shortsGrid.innerHTML = empty('No results', 'Try a different search phrase.');
+      }
+    } catch (error) {
+      const message = error.message || 'Something went wrong.';
+      videoGrid.innerHTML = empty('Could not load results', message + ' Check your API key, API access, and quota.');
+      shortsGrid.innerHTML = empty('Could not load results', message);
+      showStatus('Search failed');
+    }
+  }
+
+  function cardHTML(item, short = false) {
+    const id = item.id.videoId;
+    const snippet = item.snippet || {};
+    const title = esc(snippet.title);
+    const channel = esc(snippet.channelTitle);
+    const thumb = snippet.thumbnails?.high?.url || snippet.thumbnails?.medium?.url || `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`;
+    if (short) return `<article class="short-card" data-id="${esc(id)}" tabindex="0" role="button" aria-label="Play ${title}">
+      <div class="short-thumb"><img src="${esc(thumb)}" alt="" loading="lazy"></div><div class="short-title">${title}</div><div class="channel">${channel}</div></article>`;
+    return `<article class="video-card" data-id="${esc(id)}" tabindex="0" role="button" aria-label="Play ${title}">
+      <div class="thumb-wrap"><img src="${esc(thumb)}" alt="" loading="lazy"><div class="playmark"><span>▶</span></div></div>
+      <div class="video-meta"><div class="avatar">${esc((snippet.channelTitle || 'T').slice(0,1).toUpperCase())}</div><div style="min-width:0"><div class="video-title">${title}</div><div class="channel">${channel}</div></div></div></article>`;
+  }
+
+  function renderVideos(items) {
+    const list = currentView === 'shorts' ? [] : items;
+    videoGrid.innerHTML = list.length ? list.map(item => cardHTML(item)).join('') : empty('Search to get started', 'Use the search bar to find videos.');
+  }
+  function renderShorts(items) {
+    // The API does not provide a dedicated Shorts-only search filter.
+    // A Shorts query is used as a relevance search; results are not guaranteed to all be Shorts.
+    shortsGrid.innerHTML = items.length ? items.map(item => cardHTML(item, true)).join('') : empty('No Shorts results', 'Search for a Shorts topic.');
+  }
+  function play(id, title, isShort = false) {
+    $('modalTitle').textContent = title || 'Now playing';
+    $('playerBox').classList.toggle('short-player', isShort);
+    $('youtubePlayer').src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&playsinline=1&rel=0`;
+    $('playerModal').classList.remove('hidden');
+    $('closeModal').focus();
+  }
+  function closePlayer() {
+    $('playerModal').classList.add('hidden');
+    $('youtubePlayer').src = '';
+    $('playerBox').classList.remove('short-player');
+  }
+
+  $('searchForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const q = $('searchInput').value;
+    searchYouTube(currentView === 'shorts' && !/shorts/i.test(q) ? `${q} shorts` : q, currentView);
+  });
+  $('startSearch').addEventListener('click', () => { $('searchInput').focus(); });
+  document.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c === chip));
+    $('searchInput').value = chip.dataset.query;
+    searchYouTube(chip.dataset.query, 'home');
+  }));
+  document.querySelectorAll('.navbtn').forEach(btn => btn.addEventListener('click', () => {
+    const view = btn.dataset.view;
+    setView(view);
+    if (view === 'shorts') searchYouTube(/shorts/i.test(lastQuery) ? lastQuery : `${lastQuery} shorts`, 'shorts');
+    else if (view === 'videos') searchYouTube(lastQuery, 'videos');
+    else if (currentItems.length) { renderVideos(currentItems); showStatus(`${currentItems.length} results`); }
+    else searchYouTube('trending videos', 'home');
+  }));
+  $('saveKey').addEventListener('click', () => {
+    apiKey = $('apiKey').value.trim();
+    if (!apiKey) { showStatus('Paste an API key first'); return; }
+    showStatus('API key set for this session');
+    searchYouTube($('searchInput').value.trim() || lastQuery, currentView);
+  });
+  $('clearKey').addEventListener('click', () => {
+    apiKey = ''; $('apiKey').value = ''; showStatus('API key cleared');
+    videoGrid.innerHTML = empty('API key cleared', 'Paste an API key in Settings to search again.');
+  });
+  $('closeModal').addEventListener('click', closePlayer);
+  $('playerModal').addEventListener('click', e => { if (e.target === $('playerModal')) closePlayer(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePlayer();
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.video-card,.short-card')) { e.preventDefault(); e.target.click(); }
+  });
+  document.addEventListener('click', e => {
+    const card = e.target.closest('.video-card,.short-card');
+    if (!card) return;
+    const item = currentItems.find(v => v.id.videoId === card.dataset.id);
+    if (item) play(item.id.videoId, item.snippet?.title, card.classList.contains('short-card'));
+  });
+})();
+</script>
+</body>
+</html>
